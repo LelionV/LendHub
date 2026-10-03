@@ -1,0 +1,24 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Awaiting approval</div><div class="fs-3">{{ pending_review }}</div><a href="{% url 'dashboard:loans' %}">Review</a></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Principal lent</div><div class="fs-3">{{ lent_out }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Outstanding principal</div><div class="fs-3">{{ outstanding }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Default rate</div><div class="fs-3">{{ default_rate }}%</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Collected</div><div class="fs-3">{{ collected }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Platform revenue</div><div class="fs-3">{{ platform_revenue }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Investor earnings</div><div class="fs-3">{{ investor_earnings }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Guarantor earnings</div><div class="fs-3">{{ guarantor_earnings }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Pool (available / total)</div><div class="fs-5">{{ pool_available }} / {{ pool_total }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3"><div class="text-muted small">Open guarantee claims</div><div class="fs-3">{{ open_claims }}</div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-md-6"><div class="card p-3"><h6>Users by role</h6>
+    <ul class="mb-0">{% for r, n in roles.items %}<li>{{ r }}: {{ n }}</li>{% endfor %}</ul></div></div>
+  <div class="col-md-6"><div class="card p-3"><h6>Loans by status</h6>
+    <ul class="mb-0">{% for s, n in by_status %}<li>{{ s }}: {{ n }}</li>{% empty %}<li>No loans yet</li>{% endfor %}</ul></div></div>
+</div>
+<form method="post" action="{% url 'dashboard:process_overdue' %}" class="mt-4">{% csrf_token %}
+  <button class="btn btn-outline-secondary">Run overdue / default processing now</button>
+</form>
+{% endblock %}

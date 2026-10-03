@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: lendhub
+      POSTGRES_USER: lendhub
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    volumes: [pgdata:/var/lib/postgresql/data]
+  web:
+    build: .
+    env_file: .env
+    environment: {DB_HOST: db}
+    depends_on: [db]
+    ports: ["8000:8000"]
+  cron:   # daily overdue/default processing + nightly score recalculation
+    build: .
+    env_file: .env
+    environment: {DB_HOST: db}
+    depends_on: [web]
+    command: >
+      sh -c "while true; do python manage.py process_overdue; python manage.py recalculate_scores; sleep 86400; done"
+volumes:
+  pgdata:
